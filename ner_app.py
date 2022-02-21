@@ -89,7 +89,7 @@ st.markdown("Please first choose a model or multiple models and then choose your
 # Due to restrictions of free Resources per Streamlit app, the app deployed on Streamlit Cloud has only the five models: 'spacy small', 'spacy middle', 'spacy large', 'fhswf/bert_de_ner', 'Davlan/bert-base-multilingual-cased-ner-hrl'.
 options = st.multiselect(
      'Choose a model or multiple models (by default max. 3 models).',
-     ['spacy small', 'spacy middle', 'fhswf/bert_de_ner'])
+     ['spacy small', 'spacy middle'])
 
 options1, options2 = st.columns([2, 1])
 max_model_number = options1.selectbox(
