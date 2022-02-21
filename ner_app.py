@@ -5,8 +5,6 @@ This python generates user interface and front end using Streamlit components.
 import streamlit as st
 import pandas as pd
 import spacy
-from transformers import pipeline
-from flair.models import SequenceTagger
 from stqdm import stqdm
 
 import differentTools_processing_csv_file
@@ -111,18 +109,6 @@ def load_model(model_name):
         nlp = spacy.load('de_core_news_sm')
     if model_name == "spacy middle":
         nlp = spacy.load('de_core_news_md')
-    if model_name == "spacy large":
-        nlp = spacy.load('de_core_news_lg')
-    if model_name == 'Davlan/bert-base-multilingual-cased-ner-hrl':
-        nlp = pipeline(task="ner", model="Davlan/bert-base-multilingual-cased-ner-hrl", aggregation_strategy="average")
-    if model_name == 'fhswf/bert_de_ner':
-        nlp = pipeline(task="ner", model="fhswf/bert_de_ner", aggregation_strategy="average")
-    if model_name == 'flair/ner-german':
-        nlp = SequenceTagger.load("flair/ner-german")
-    if model_name == 'flair/ner-german-large':
-        nlp = SequenceTagger.load("flair/ner-german-large")
-    if model_name == 'flair/ner-multi':
-        nlp = SequenceTagger.load("flair/ner-multi")
     return nlp
 
 
