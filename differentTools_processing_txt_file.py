@@ -249,7 +249,7 @@ def flair_analyse_normal_text(text, nlp_model, entities):
     return df_statistic, html_file
 
 
-# @st.experimental_memo(suppress_st_warning=True)
+@st.experimental_memo(suppress_st_warning=True)
 def analyse_normal_text(model_name, text, entities, _nlp_model=None):
     """
     This function provides a unified interface for processing text type data using different models.
