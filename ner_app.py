@@ -91,12 +91,6 @@ options = st.multiselect(
      'Choose a model or multiple models (by default max. 3 models).',
      ['spacy small', 'spacy middle', 'spacy large', 'fhswf/bert_de_ner', 'Davlan/bert-base-multilingual-cased-ner-hrl'])
 
-# If you build this app locally, you can use the following multichoice box that contains nine models.
-'''
-options = st.multiselect(
-     'Choose a model or multiple models (by default max. 3 models).',
-     ['spacy small', 'spacy middle', 'spacy large', 'nltk', 'fhswf/bert_de_ner', 'Davlan/bert-base-multilingual-cased-ner-hrl', 'flair/ner-german', 'flair/ner-german-large', 'flair/ner-multi'])
-'''
 options1, options2 = st.columns([2, 1])
 max_model_number = options1.selectbox(
      'You can change the maximal number of models allowed here',
