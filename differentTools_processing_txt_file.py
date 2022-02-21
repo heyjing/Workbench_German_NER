@@ -26,6 +26,7 @@ from nltk import Tree
 import time
 import re
 import general
+import streamlit as st
 
 
 def show_number_of_entities_in_df(org_number, per_number, loc_number, exec_time):
