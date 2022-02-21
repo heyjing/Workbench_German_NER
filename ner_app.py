@@ -5,7 +5,6 @@ This python generates user interface and front end using Streamlit components.
 import streamlit as st
 import pandas as pd
 import spacy
-import nltk
 from transformers import pipeline
 from flair.models import SequenceTagger
 from stqdm import stqdm
@@ -16,8 +15,6 @@ import general
 import generate_plot
 
 st.set_page_config(layout="wide")
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
 stqdm.pandas()
 
 menu = ["CSV data in annotated format", "TXT normal text", "Text input"]
