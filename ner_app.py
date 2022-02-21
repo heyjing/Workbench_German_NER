@@ -15,6 +15,7 @@ import general
 import generate_plot
 
 st.set_page_config(layout="wide")
+nltk.download('punkt')
 stqdm.pandas()
 
 menu = ["CSV data in annotated format", "TXT normal text", "Text input"]
