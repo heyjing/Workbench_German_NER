@@ -33,7 +33,7 @@ from nltk import Tree
 import time
 import general
 
-
+@st.experimental_memo(suppress_st_warning=True)
 def add_sentence_nr(data):
     """
     This function is for the analysis of csv ground truth data.
@@ -55,7 +55,7 @@ def add_sentence_nr(data):
 
     return data
 
-
+@st.experimental_memo(suppress_st_warning=True)
 def get_sentences(data):
     """
     This function is for the analysis of csv ground truth data.
