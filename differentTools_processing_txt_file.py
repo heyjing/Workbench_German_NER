@@ -19,7 +19,6 @@ For txt files:
 
 from spacy import displacy
 import pandas as pd
-import nltk
 
 from stqdm import stqdm
 import time
