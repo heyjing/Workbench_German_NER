@@ -105,7 +105,7 @@ entities_options = options2.multiselect(
 st.sidebar.title("File Uploading area")
 
 
-# @st.experimental_memo
+@st.experimental_memo
 def load_model(model_name):
     if model_name == "spacy small":
         nlp = spacy.load('de_core_news_sm')
