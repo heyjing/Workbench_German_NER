@@ -26,10 +26,7 @@ import streamlit as st
 from spacy import displacy
 import pandas as pd
 import numpy as np
-import nltk
-from flair.data import Sentence
 from stqdm import stqdm
-from nltk import Tree
 import time
 import general
 
@@ -75,41 +72,6 @@ def get_sentences(data):
     return df
 
 
-def nltk_analyse_csv_single_sentence(text, entities):
-    """
-    This function processes single sentence that is extracted from the csv ground truth data using nltk.
-    It returns the found entities of single sentence in a dataframe with two columns 'tokens' and 'label' and
-    the html_file for the rendering of this sentence.
-
-    @param text: string
-    @param entities: list contains of different entity type, such as ['LOC', 'PER', 'ORG']
-
-    @return: a dataframe contains 'tokens' and 'label' in each sentence and a html string for rendering of each sentence.
-    """
-
-    df_single_sentence = pd.DataFrame(columns=['tokens', 'label'])
-    i = 0
-    ner_results = []
-    for sent in nltk.sent_tokenize(text, language='german'):
-        for chunk in nltk.chunk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent, language='german'))):
-            if isinstance(chunk, Tree):
-                if hasattr(chunk, 'label'):
-                    ent = ' '.join([w for w, _ in chunk.leaves()])
-                    if chunk.label() == "GPE":
-                        df_single_sentence.loc[i] = {'tokens': ent, 'label': "LOC"}
-                        ner_results.append({"start": text.find(ent), "end": text.find(ent) + len(ent), "label": "LOC"})
-                    if chunk.label() != "GPE":
-                        df_single_sentence.loc[i] = {'tokens': ent, 'label': chunk.label()[0:3]}
-                        ner_results.append(
-                            {"start": text.find(ent), "end": text.find(ent) + len(ent), "label": chunk.label()[0:3]})
-                    i += 1
-    rendering_format = [{"text": text, "ents": ner_results, "title": None}]
-    html_file = displacy.render(rendering_format, style="ent", options=general.choose_entity(entities),
-                                manual=True)
-
-    return df_single_sentence, html_file
-
-
 def spacy_analyse_csv_single_sentence(text, nlp_model, entities):
     """
     This function processes single sentence that is extracted from the csv ground truth data using spacy.
@@ -129,58 +91,6 @@ def spacy_analyse_csv_single_sentence(text, nlp_model, entities):
     entity = list(ner_results.ents)
     for i in range(len(entity)):
         df_single_sentence.loc[i] = {'tokens': entity[i].text, 'label': entity[i].label_}
-    return df_single_sentence, html_file
-
-
-def bert_analyse_csv_single_sentence(text, nlp_model, entities):
-    """
-    This function processes single sentence that is extracted from the csv ground truth data using bert.
-    It returns the found entities of single sentence in a dataframe with two columns 'tokens' and 'label' and
-    the html_file for the rendering of this sentence.
-
-    @param text: string
-    @param nlp_model: bert model
-    @param entities: list contains of different entity type, such as ['LOC', 'PER', 'ORG']
-
-    @return: a dataframe contains 'tokens' and 'label' in each sentence and a html string for rendering of each sentence.
-    """
-
-    df_single_sentence = pd.DataFrame(columns=['tokens', 'label'])
-    ner_results = nlp_model(text)
-
-    for i in range(len(ner_results)):
-        ner_results[i]["label"] = ner_results[i].pop("entity_group")
-        df_single_sentence.loc[i] = {'tokens': ner_results[i]["word"], 'label': ner_results[i]["label"]}
-    rendering_format = [{"text": text, "ents": ner_results, "title": None}]
-    html_file = displacy.render(rendering_format, style="ent", options=general.choose_entity(entities), manual=True)
-    return df_single_sentence, html_file
-
-
-def flair_analyse_csv_single_sentence(text, nlp_model, entities):
-    """
-    This function processes single sentence that is extracted from the csv ground truth data using flair.
-    It returns the found entities of single sentence in a dataframe with two columns 'tokens' and 'label' and
-    the html_file for the rendering of this sentence.
-
-    @param text: string
-    @param nlp_model: flair model
-    @param entities: list contains of different entity type, such as ['LOC', 'PER', 'ORG']
-
-    @return: a dataframe contains 'tokens' and 'label' in each sentence and a html string for rendering of each sentence.
-    """
-
-    df_single_sentence = pd.DataFrame(columns=['tokens', 'label'])
-    sentence = Sentence(text)
-    # predict NER tags
-    nlp_model.predict(sentence)
-    ner_results = []
-
-    for i in range(len(sentence.get_spans('ner'))):
-        entity = sentence.get_spans('ner')[i]
-        df_single_sentence.loc[i] = {'tokens': entity.text, 'label': str(entity.labels)[1:4]}
-        ner_results.append({"start": entity.start_pos, "end": entity.end_pos, "label": str(entity.labels)[1:4]})
-    rendering_format = [{"text": text, "ents": ner_results, "title": None}]
-    html_file = displacy.render(rendering_format, style="ent", options=general.choose_entity(entities), manual=True)
     return df_single_sentence, html_file
 
 
@@ -204,12 +114,6 @@ def get_result_for_csv_data_type(model_name, sentences, entities, _nlp_model=Non
     for i in stqdm(range(len(sentences)), desc="Approximate time needed: "):
         if model_name == "spacy small" or model_name == "spacy middle" or model_name == "spacy large":
             current_sentence_df, single_sentence_html_file = spacy_analyse_csv_single_sentence((str(i) + ". " + sentences.iloc[i]['sentences']), _nlp_model, entities)
-        if model_name == "Davlan/bert-base-multilingual-cased-ner-hrl" or model_name == "fhswf/bert_de_ner":
-            current_sentence_df, single_sentence_html_file = bert_analyse_csv_single_sentence((str(i) + ". " + sentences.iloc[i]['sentences']), _nlp_model, entities)
-        if model_name == "flair/ner-german" or model_name == "flair/ner-german-large" or model_name == "flair/ner-multi":
-            current_sentence_df, single_sentence_html_file = flair_analyse_csv_single_sentence((str(i) + ". " + sentences.iloc[i]['sentences']), _nlp_model, entities)
-        if model_name == "nltk":
-            current_sentence_df, single_sentence_html_file = nltk_analyse_csv_single_sentence((str(i) + ". " + sentences.iloc[i]['sentences']), entities)
         current_sentence_df['sentence_nr'] = i
         result = result.append(current_sentence_df)
         html_file.append(single_sentence_html_file)
