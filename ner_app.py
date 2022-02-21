@@ -5,6 +5,7 @@ This python generates user interface and front end using Streamlit components.
 import streamlit as st
 import pandas as pd
 import spacy
+import nltk
 from transformers import pipeline
 from flair.models import SequenceTagger
 from stqdm import stqdm
